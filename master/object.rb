@@ -1,112 +1,58 @@
 require 'gosu'
 require './animation'
 
-class Obs
-
-      def Obs.spawn_player(x, y, sprite, w, h)
-            Player.new(Gosu::Image.new(sprite, :tileable => true))
-      end
-
-      def Obs.spawn_cloud(x, y, sprite, w, h)
-            frames = Gosu::Image.load_tiles(sprite, w, h)
-            Cloud.new(x, y, frames)
-      end
-
-      class Cloud
-
-            def initialize(x, y, frames)
-
-                  @frames = frames
-                  @x, @y = x, y
-
-                  # pick which animation frames to apply
-                  @animate = {
-                        # 0..4 indicates the frames. 0.x indicates anim speed
-                        :right => Animation.new(@frames[0..4], 0.4),
-                        :left => Animation.new(@frames[0..4], 0.4)
-                  }
-
-                  # which direction
-                  @movement = {
-                        :left => -4.0,
-                        :right => 4.0,
-                        :stop => 0.0
-                  }
-            end
-
-            def update(direction)
-                  # moves the object
-                  move(direction)
-                  # set the direction so draw() has access
-                  @direction = direction
-                  # wrap at the end of the screen
-                  if @x > 1000
-                        @x = -200
-                  end
-            end
-
-            def draw
-                  @animate[@direction].start.draw(@x, @y, 1, scale_x = 0.3, scale_y = 0.3)
-            end
-
-            # cloud debug
-            def what_am_i
-                  puts 'i am a cloud'
-            end
-
-            def debug
-                  puts "x: #{@x} y: #{@y}"
-            end
-      # end cloud class
-      end
-
-
-      # class Player
-      #       def initialize(sprite)
-      #             @sprite = sprite
-      #             @x, @y = 100, 200
-      #       end
-      #
-      #       def draw
-      #             @sprite.draw(@x, @y, 1, scale_x = 0.05, scale_y = 0.05)
-      #       end
-      #
-      #       puts "hello"
-      #       def what_am_i
-      #             puts "world"
-      #       end
-      # end
-
-            # def Obs.spawn
-            #       def cloud
-            #             Obs.new
-            #       end
-            #
-            # end
-            #
-            #
-            # class Player
-            #       puts "hello"
-            #       def what_am_i
-            #             puts "world"
-            #       end
-            # end
-
-
+class Obj
+	attr_accessor :x, :y, :frames, :scale, :zaxis, :wrapping
+	def initialize(x, y, frames, w, h, velx, vely, scale, zaxis, wrapping)
+		@frames = frames
+		@x, @y = x, y
+		@velx = velx
+		@vely = vely
+		@scale = scale
+		@zaxis = zaxis
+		@wrapping = wrapping
+	end
 end
 
-def move(direction)
-      if direction == :right || direction == :left
-            @x += @movement[direction]
-      end
+def spawn_obj(x, y, spritesheet, w, h, velx, vely, scale, zaxis, wrapping)
+	frames = Gosu::Image.load_tiles(spritesheet, w, h)
+	Obj.new(x, y, frames, w, h, velx, vely, scale, zaxis, wrapping)
+end
 
-      if direction == :up || direction == :down
-            @y += @movement[direction]
-      end
 
-      if direction == :stop
-            @x = 0
-            @y = 0
-      end
+# moves objects around
+def update_object(object, x, y)
+	object.x += x
+	object.y += y
+	# wrap at the end of the screen
+	process_boundaries(object)
+end
 
+# determines if an object needs to wrap the screen
+def process_boundaries(object)
+	if object.x > 1000 or object.x < -300
+		if !object.wrapping
+			@clouds.delete_at(0)
+			puts "deleted cloud"
+		else
+			object.x = -200
+		end
+	end
+end
+
+# reads all of the keyframes for all sprites
+def get_keyframes(object)
+	keyframes = {
+		# 0..4 indicates the frames. 0.x indicates anim speed
+		:right => Animation.new(object.frames[0..object.frames.length], 0.4),
+		:left => Animation.new(object.frames[0..object.frames.length], 0.4)
+	}
+	return keyframes
+end
+
+def draw_obj(object, direction)
+	if object.frames
+		keyframes = get_keyframes(object)
+		keyframes[direction].start.draw(object.x, object.y, object.zaxis, object.scale , object.scale)
+	end
 end
