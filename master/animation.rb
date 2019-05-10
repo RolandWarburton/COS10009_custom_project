@@ -3,7 +3,6 @@ require 'gosu'
 class Animation
       def initialize(frames, time_in_secs)
             @frames = frames
-            p "frames size = #{frames.size}"
             @time = time_in_secs * 1000
       end
 
