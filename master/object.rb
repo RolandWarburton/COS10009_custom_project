@@ -58,12 +58,27 @@ def update_object(object, x, y)
 	process_boundaries(object)
 end
 
+def floor_zero(x,y)
+	return [x > 0 ? x : 0, y > 0 ? y : 0]
+end
+
+# return an objects location on the grid
+def get_current_cell(object)
+	x = object.x/CELL_DIM
+	y = object.y/CELL_DIM
+	coords = floor_zero(x,y)
+	# puts "#{coords[0]} #{ coords[1]}"
+	return coords
+
+end
+
 # determines if an object needs to wrap the screen
 def process_boundaries(object)
-	if object.x > WIDTH+300 or object.x < -300
+	coords = get_current_cell(object)
+	# if its outside of the map area. measured in cells
+	if coords[0] > CELL_X_COUNT or coords[0] < -3
 		if !object.wrapping
 			@clouds.delete_at(0)
-			puts "deleted cloud"
 		else
 			object.x = -200
 		end
@@ -73,7 +88,5 @@ end
 
 
 def draw_obj(object, direction=:right)
-	if object
-		object.keyframes[direction].start.draw(object.x, object.y, object.zaxis, object.scale , object.scale)
-	end
+	if object then object.keyframes[direction].start.draw(object.x, object.y, object.zaxis, object.scale , object.scale) end
 end
