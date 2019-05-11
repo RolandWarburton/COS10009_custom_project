@@ -45,7 +45,7 @@ def get_keyframes(object)
 			:right => Animation.new(object.tiles[0..object.tiles.length], 0.4)
 		}
 	end
-	
+
 	return keyframes
 end
 
@@ -100,6 +100,6 @@ def process_boundaries(object)
 
 end
 
-def draw_obj(object, direction=:right)
-	if object then object.keyframes[direction].start.draw(object.x, object.y, object.zaxis, object.scale , object.scale) end
+def draw_obj(object, direction=:right, *frame)
+	if object then object.keyframes[direction].start(*frame).draw(object.x, object.y, object.zaxis, object.scale , object.scale) end
 end
