@@ -1,12 +1,18 @@
 class Node
       attr_accessor :x, :y, :block
-
       def initialize(x, y, block)
 		@x = x
 		@y = y
 		@block = block
       end
 
+end
+
+class Fixnum
+  def roundup
+    return self if self % 50 == 0   # already a factor of 10
+    return self + 50 - (self % 50)  # go to nearest factor 10
+  end
 end
 
 def get_cell_type(row_index)
@@ -18,40 +24,64 @@ def get_cell_type(row_index)
       if media then return media else return "./media/dirt.png" end
 end
 
-
 def generate_cells()
+      cols = @cell_x_count
+      rows = @cell_y_count
+      table = Array.new()
 
-      cols = CELL_X_COUNT
-      rows = CELL_Y_COUNT
-      table = Array.new(rows)
+	@cell_y_count.times do |x|
 
-	row_index = 0
-      while row_index < rows
-            table[row_index] = Array.new(2)
-            col_index = 0
-            while col_index < cols
-                  media = get_cell_type(row_index).to_s
-
-			# row_index < 3 ? (media = "./media/air.png") : (media = "./media/dirt.png")
-			block = spawn_obj(0, 0, media, 50, 50, 0, 0, 1, 0, false)
-			block.x = col_index*CELL_DIM
-			block.y = row_index*CELL_DIM
-			# p "#{row_index},#{col_index}"
-
-                  table[row_index][col_index] = Node.new(row_index, col_index, block)
-                  col_index += 1
+            @cell_x_count.times do |y|
+                  media = get_cell_type(x).to_s
+                  block = spawn_obj(0, 0, media, 50, 50, 0, 0, 1, 0, false)
+                  block.x = y*CELL_DIM
+                  block.y = x*CELL_DIM
+                  table << Node.new(x, y, block)
             end
-		row_index += 1
       end
 
       return table
 end
 
 
+def generate_row()
+      puts "generating row #{@cell_y_count+1}"
+
+      x = @cell_y_count
+      1.times do
+            @cell_x_count.times do |y|
+                  media = get_cell_type(x).to_s
+                  block = spawn_obj(0, 0, media, 50, 50, 0, 0, 1, 0, false)
+                  block.x = y*CELL_DIM
+                  block.y = x*CELL_DIM
+                  @columns << Node.new(x, y, block)
+            end
+      end
+      # increment the row count
+      @cell_y_count+=1
+      # delete the oldest row
+      delete_row()
+end
+
+def delete_row()
+      puts "current rows: #{@columns.length/@cell_x_count}"
+      # puts @columns.size
+      @cell_x_count.times do |y|
+            if (@columns.size/@cell_x_count > 50)
+                  @columns.delete_at(0)
+            end
+      end
+end
+
+
 def draw_blocks(blocks)
-	for row in blocks
-		for col in row
-			draw_obj(col.block)
-		end
+      blocks.length.times do |block|
+		draw_obj(@columns[block].block)
+            # p @columns[block]
 	end
+end
+
+def print_mouse_coords
+      # puts "#{mouse_x} #{mouse_y}"
+      puts "#{(mouse_x).round/CELL_DIM} #{(mouse_y.round)/CELL_DIM}"
 end
