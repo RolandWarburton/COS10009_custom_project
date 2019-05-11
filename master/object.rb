@@ -100,6 +100,11 @@ def process_boundaries(object)
 
 end
 
-def draw_obj(object, direction=:right, *frame)
-	if object then object.keyframes[direction].start(*frame).draw(object.x, object.y, object.zaxis, object.scale , object.scale) end
+# how can i do this as a ruby optional argument?
+def draw_obj(object, direction=:right)
+	if object then object.keyframes[direction].start().draw(object.x, object.y, object.zaxis, object.scale , object.scale) end
+end
+
+def draw_obj_frame(object, direction=:right, frame)
+	if object then object.keyframes[direction].show_frame(frame).draw(object.x, object.y, object.zaxis, object.scale , object.scale) end
 end
