@@ -6,8 +6,12 @@ class Animation
             @time = time_in_secs * 1000
       end
 
-      def start(*frame)
-            frame.size > 0 ? @frames[0] :  @frames[Gosu::milliseconds / @time % @frames.size]
+      def start()
+            @frames[Gosu::milliseconds / @time % @frames.size]
+      end
+
+      def show_frame(frame)
+            @frames[frame]
       end
 
       def stop
