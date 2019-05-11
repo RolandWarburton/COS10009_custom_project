@@ -45,7 +45,7 @@ def get_keyframes(object)
 			:right => Animation.new(object.tiles[0..object.tiles.length], 0.4)
 		}
 	end
-
+	
 	return keyframes
 end
 
@@ -58,34 +58,47 @@ def update_object(object, x, y)
 	process_boundaries(object)
 end
 
-def floor_zero(x,y)
+def teleport_object(object, x, y)
+	object.x = x
+	object.y = y
+end
+
+def floor_coord(x,y)
 	return [x > 0 ? x : 0, y > 0 ? y : 0]
 end
 
 # return an objects location on the grid
-def get_current_cell(object)
-	x = object.x/CELL_DIM
-	y = object.y/CELL_DIM
-	coords = floor_zero(x,y)
-	# puts "#{coords[0]} #{ coords[1]}"
-	return coords
+def get_grid_loc(object)
+	x = (object.x.floor_to(50))/CELL_DIM
+	y = (object.y.floor_to(50))/CELL_DIM
+	return [x,y]
+end
+
+# translates a pixel location to a grid location
+def pix_round(object)
+	x = object.x.floor_to(50)
+	y = object.y.floor_to(50)
+	return [x, y]
 
 end
 
 # determines if an object needs to wrap the screen
 def process_boundaries(object)
-	coords = get_current_cell(object)
-	# if its outside of the map area. measured in cells
-	if coords[0] > CELL_X_COUNT or coords[0] < -3
-		if !object.wrapping
-			@clouds.delete_at(0)
-		else
-			object.x = -200
-		end
+	coords = get_grid_loc(object)
+	# if its outside of the map area. measured in pixels
+	if object.x > (@cell_x_count*CELL_DIM)-CELL_DIM
+		teleport_object(@player, (@cell_x_count*CELL_DIM)-CELL_DIM, @player.y)
+		object.target_location = get_grid_loc(@player)
+		return false
+	elsif object.x < 0
+		teleport_object(@player, 0, @player.y)
+		object.target_location = get_grid_loc(@player)
+		return false
 	end
+
+	return true
+
 end
-
-
 
 def draw_obj(object, direction=:right)
 	if object then object.keyframes[direction].start.draw(object.x, object.y, object.zaxis, object.scale , object.scale) end
