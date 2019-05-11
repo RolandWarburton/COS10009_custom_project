@@ -1,4 +1,5 @@
 require 'gosu'
+require 'rounding'
 # require './cloud'
 require './object'
 require './player'
@@ -7,8 +8,8 @@ require './map'
 WIDTH = 800
 HEIGHT = 1000
 CELL_DIM = 50
-CELL_X_COUNT = WIDTH/CELL_DIM
-CELL_Y_COUNT = HEIGHT/CELL_DIM
+CELL_X_COUNT = (WIDTH/CELL_DIM)
+CELL_Y_COUNT = (HEIGHT/CELL_DIM)
 
 
 
@@ -16,14 +17,18 @@ class GameWindow < Gosu::Window
       def initialize
             super WIDTH, HEIGHT
             self.caption = "Game"
-            puts "map width = #{CELL_X_COUNT}"
-            puts "map height = #{CELL_Y_COUNT}"
+            @cell_x_count = WIDTH/CELL_DIM
+            @cell_y_count = (HEIGHT/CELL_DIM)+1
+            puts "map width = #{@cell_x_count}"
+            puts "map height = #{@cell_y_count}"
 
 		@columns = generate_cells()
 		@clouds = Array.new()
 		@blocks = Array.new()
             @player = spawn_player(0,150,'./media/player.png',50,50,0,0,1,1,true)
-            @player.target_location = get_current_cell(@player)
+            @player.location = get_grid_loc(@player)
+            @player.target_location = @player.location
+            p @player.location
 
 		# @clouds << cloud = spawn_obj(-50, 100, './media/cloud1.png', 846, 540, 4, 0, 0.3, 1, true)
 		# @blocks << block = spawn_obj(0, 0, './media/dirt.png', 50, 50, 0, 0, 1, 1, false)
@@ -47,40 +52,60 @@ class GameWindow < Gosu::Window
       # runs before update
       def button_down(id)
             case id
-            when Gosu::KbRight
-
+            when Gosu::MsLeft
+                  print_mouse_coords
             when Gosu::KbLeft
+            end
 
       end
 
       # update
       def update
-            @player.location = get_current_cell(@player)
+            @player.location = get_grid_loc(@player)
+
+            # camera controls
+            @player.location[1] > 15 ? @tracking  -=5 : @tracking = 0
 
 
+            # puts "#{pix_round(@player)[1]} > #{@columns[-1].x*CELL_DIM}"
+            if  pix_round(@player)[1]+HEIGHT > @columns[-1].x*CELL_DIM
+                  generate_row()
+            end
 
-            # if the player has a new target cell
-            if @player.location[0] != @player.target_location[0]
-                  update_object(@player, @player.velx, @player.vely)
-            else
-                  # else the player has no more movements to do :)
-                  @player.target_location = @player.location
+            # DEBUG STUFF
+            # p "#{@player.location} -> #{@player.target_location}"
+
+            # spawning in clouds at random
+            # if rand(100) == 1 and @clouds.length <1 then @clouds << cloud = spawn_obj(-50, rand(HEIGHT), './media/cloud1.png', 846, 540, 4, 0, 0.3, 1, false) end
+
+
+            # if the player is on the target cell. checking x and y.
+            #  checking the pixels cos otherwise the player does fuycky things
+            if @player.y == @player.target_location[1]*CELL_DIM and @player.x == @player.target_location[0]*CELL_DIM
                   @player.velx = 0
                   @player.vely = 0
+            else
+                  # else the player needs to move
+                  update_object(@player, @player.velx, @player.vely)
             end
 
-		# if rand(100) == 1 and @clouds.length <1 then @clouds << cloud = spawn_obj(-50, rand(HEIGHT), './media/cloud1.png', 846, 540, 4, 0, 0.3, 1, false) end
 
-            # do things every frame. ie. continuously
-            if button_down?(Gosu::KbRight)
-                  @player.target_location[0] = @player.location[0]+1
-                  @player.velx = 2
-                  # do some stuff continuously
-            end
-            if button_down?(Gosu::KbLeft)
-                  @player.target_location[0] = @player.location[0]-1
+
+            if button_down?(Gosu::KbLeft) and @player.vely == 0 and @player.velx ==0 and process_boundaries(@player)
+                  @player.target_location[0] = (@player.location[0]-1)
                   @player.velx = -2
-                  # do some stuff continuously
+            end
+            if button_down?(Gosu::KbRight) and @player.vely == 0 and @player.velx ==0 and process_boundaries(@player)
+                  @player.target_location[0] = (@player.location[0]+1)
+                  @player.velx = 2
+            end
+            if button_down?(Gosu::KbUp) and @player.vely == 0 and @player.velx ==0 and process_boundaries(@player)
+                  @player.target_location[1] = (@player.location[1]-1)
+                  @player.vely = -2
+            end
+            if button_down?(Gosu::KbDown) and @player.vely == 0 and @player.velx ==0 and process_boundaries(@player)
+                  @player.target_location[1] = (@player.location[1]+1)
+                  @player.vely = 10
             end
 
 		@clouds.each do |cloud|
@@ -92,14 +117,15 @@ class GameWindow < Gosu::Window
 
 	#draw
 	def draw
-		if @clouds then @clouds.each { |cloud| draw_obj(cloud, :right) } end
-		if @blocks then @blocks.each { |block| draw_obj(block, :right) } end
+            # draw clouds
+            # if @clouds then @clouds.each { |cloud| draw_obj(cloud, :right) } end
 
-		draw_blocks(@columns)
-		draw_obj(@background, :right)
-            draw_obj(@player, :right)
+                  Gosu.translate(0, @tracking) do
+                        draw_blocks(@columns)
+                        draw_obj(@player, :right)
+                  end
+            end
       end
-
-end
+# thanks for playing :)
 
 GameWindow.new.show
