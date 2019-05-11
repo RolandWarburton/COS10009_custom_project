@@ -49,26 +49,8 @@ class GameWindow < Gosu::Window
             case id
             when Gosu::KbRight
 
-                  # get the cell to make the debug window look nice
-                  # @player.location = get_current_cell(@player)
-                  # temp populate the target location
-                  # @player.target_location = @player.location
-                  # adjust = @player.location[0]+1
-                  # p adjust
-                  # @player.target_location[0] = @player.location[0]+1
-                  update_object(@player, 1, 0)
-                  puts "#{@player.location[0]} #{@player.location[1]}"
             when Gosu::KbLeft
 
-                  # get the cell to make the debug window look nice
-                  # @player.location = get_current_cell(@player)
-                  # temp populate the target location
-                  # @player.target_location = @player.location
-                  # @player.target_location[0] = @player.location[0]-1
-                  update_object(@player, -1, 0)
-                  puts "#{@player.location[0]} #{@player.location[1]}"
-
-            end
       end
 
       # update
@@ -77,21 +59,27 @@ class GameWindow < Gosu::Window
 
 
 
-            # # if the player has a new target cell
-            # if @player.location[0] != @player.target_location[0]
-            #       # puts "traveling"
-            #       update_object(@player, @player.velx, @player.vely)
-            # else
-            #       # else the player has no more movements to do :)
-            #       # puts "not traveling"
-            #       @player.target_location = @player.location
-            #       @player.velx = 0
-            #       @player.vely = 0
-            # end
+            # if the player has a new target cell
+            if @player.location[0] != @player.target_location[0]
+                  update_object(@player, @player.velx, @player.vely)
+            else
+                  # else the player has no more movements to do :)
+                  @player.target_location = @player.location
+                  @player.velx = 0
+                  @player.vely = 0
+            end
 
 		# if rand(100) == 1 and @clouds.length <1 then @clouds << cloud = spawn_obj(-50, rand(HEIGHT), './media/cloud1.png', 846, 540, 4, 0, 0.3, 1, false) end
 
+            # do things every frame. ie. continuously
             if button_down?(Gosu::KbRight)
+                  @player.target_location[0] = @player.location[0]+1
+                  @player.velx = 2
+                  # do some stuff continuously
+            end
+            if button_down?(Gosu::KbLeft)
+                  @player.target_location[0] = @player.location[0]-1
+                  @player.velx = -2
                   # do some stuff continuously
             end
 
