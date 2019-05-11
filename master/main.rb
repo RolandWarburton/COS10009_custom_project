@@ -4,6 +4,7 @@ require 'rounding'
 require './object'
 require './player'
 require './map'
+require './ui'
 
 WIDTH = 800
 HEIGHT = 1000
@@ -28,7 +29,12 @@ class GameWindow < Gosu::Window
             @player = spawn_player(0,150,'./media/player.png',50,50,0,0,1,1,true)
             @player.location = get_grid_loc(@player)
             @player.target_location = @player.location
-            p @player.location
+
+
+            @fuelcells = generate_fuel()
+            @fuel = 20000
+
+
 
 		# @clouds << cloud = spawn_obj(-50, 100, './media/cloud1.png', 846, 540, 4, 0, 0.3, 1, true)
 		# @blocks << block = spawn_obj(0, 0, './media/dirt.png', 50, 50, 0, 0, 1, 1, false)
@@ -40,10 +46,6 @@ class GameWindow < Gosu::Window
                   kb_right: Gosu::KbRight,
             }
 
-		@list_of_objs = {
-			# frames, and time in secs
-			:cloud => @clouds
-		}
             def needs_cursor?
                   true
             end
@@ -65,6 +67,16 @@ class GameWindow < Gosu::Window
 
             # camera controls
             @player.location[1] > 15 ? @tracking  -=5 : @tracking = 0
+
+
+            for f in @fuelcells
+                  update_object(f, f.velx, f.vely)
+            end
+            if @fuel % 500 == 0 then @fuelcells.pop end
+            @fuel -= 100
+
+            track_fuel(@fuelcells)
+            # @fuelcells -= 1
 
 
             # puts "#{pix_round(@player)[1]} > #{@columns[-1].x*CELL_DIM}"
@@ -113,6 +125,9 @@ class GameWindow < Gosu::Window
 		end
 
 
+
+
+
       end
 
 	#draw
@@ -123,6 +138,9 @@ class GameWindow < Gosu::Window
                   Gosu.translate(0, @tracking) do
                         draw_blocks(@columns)
                         draw_obj(@player, :right)
+                        @fuel > 15000 ? frame = 0 : frame = 1
+                        p frame
+                        if @fuelcells then @fuelcells.each { |fuel| draw_obj_frame(fuel, :right, frame) } end
                   end
             end
       end
