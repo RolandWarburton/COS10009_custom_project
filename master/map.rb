@@ -77,11 +77,10 @@ end
 def draw_blocks(blocks)
       blocks.length.times do |block|
 		draw_obj(@columns[block].block)
-            # p @columns[block]
 	end
 end
 
 def print_mouse_coords
-      # puts "#{mouse_x} #{mouse_y}"
-      puts "#{(mouse_x).round/CELL_DIM} #{(mouse_y.round)/CELL_DIM}"
+      puts "#{mouse_x} #{mouse_y}"
+      # puts "#{(mouse_x).round/CELL_DIM} #{(mouse_y.round)/CELL_DIM}"
 end
