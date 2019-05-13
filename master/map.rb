@@ -1,9 +1,10 @@
 class Node
-      attr_accessor :x, :y, :block
-      def initialize(x, y, block)
+      attr_accessor :x, :y, :block, :visited
+      def initialize(x, y, block, visited)
 		@x = x
 		@y = y
 		@block = block
+            @visited = visited
       end
 
 end
@@ -30,22 +31,39 @@ def generate_cells()
       table = Array.new()
 
 	@cell_y_count.times do |x|
-
             @cell_x_count.times do |y|
                   media = get_cell_type(x).to_s
                   block = spawn_obj(0, 0, media, 50, 50, 0, 0, 1, 0, false)
                   block.x = y*CELL_DIM
                   block.y = x*CELL_DIM
-                  table << Node.new(x, y, block)
+                  table << Node.new(x, y, block, false)
             end
       end
-
       return table
 end
 
+def target_cell(x=50, y=100 )
+      # puts "cell [#{@columns[18].x}, #{@columns[18].y}] is at [#{@columns[18].x*CELL_DIM}, #{@columns[18].y*CELL_DIM}]"
+      # @temp = spawn_obj(50, 100, "./media/red.png", 50, 50, 0, 0, 1, 0, false)
+      x = (x.floor_to(50)/CELL_DIM)
+      y = (y.floor_to(50)/CELL_DIM)
+      cell_id = 0
+      # p "x = #{x} y = #{y}"
+      y.times do cell_id+=16 end
+      x.times do cell_id+=1 end
+      # p "cell id: #{cell_id}"
+      return @columns[cell_id]
+      # puts "#{x}, #{y}"
+end
+
+def swap_tile(object)
+      object.visited = true
+end
+
+
 
 def generate_row()
-      puts "generating row #{@cell_y_count+1}"
+      # puts "generating row #{@cell_y_count+1}"
 
       x = @cell_y_count
       1.times do
@@ -54,7 +72,7 @@ def generate_row()
                   block = spawn_obj(0, 0, media, 50, 50, 0, 0, 1, 0, false)
                   block.x = y*CELL_DIM
                   block.y = x*CELL_DIM
-                  @columns << Node.new(x, y, block)
+                  @columns << Node.new(x, y, block, false)
             end
       end
       # increment the row count
@@ -64,7 +82,7 @@ def generate_row()
 end
 
 def delete_row()
-      puts "current rows: #{@columns.length/@cell_x_count}"
+      # puts "current rows: #{@columns.length/@cell_x_count}"
       # puts @columns.size
       @cell_x_count.times do |y|
             if (@columns.size/@cell_x_count > 50)
@@ -76,7 +94,14 @@ end
 
 def draw_blocks(blocks)
       blocks.length.times do |block|
-		draw_obj(@columns[block].block)
+            draw_obj_frame(@columns[block].block, :right, 0)
+            # p @columns[block].block.keyframes
+            # if @columns[block].visited
+            #
+            # else
+            #       draw_obj_frame(@columns[block].block, :right, 1)
+            # end
+
 	end
 end
 

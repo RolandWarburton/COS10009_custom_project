@@ -20,8 +20,8 @@ class GameWindow < Gosu::Window
             self.caption = "Game"
             @cell_x_count = WIDTH/CELL_DIM
             @cell_y_count = (HEIGHT/CELL_DIM)+1
-            puts "map width = #{@cell_x_count}"
-            puts "map height = #{@cell_y_count}"
+            puts "map width (x) = #{@cell_y_count}"
+            puts "map height (y) = #{@cell_x_count}"
 
 		@columns = generate_cells()
 		@clouds = Array.new()
@@ -33,6 +33,8 @@ class GameWindow < Gosu::Window
 
             @fuelcells = generate_fuel()
             @fuel = 20000
+
+            target_cell()
 
 
 
@@ -73,7 +75,7 @@ class GameWindow < Gosu::Window
                   update_object(f, f.velx, f.vely)
             end
             if @fuel % 500 == 0 then @fuelcells.pop end
-            @fuel -= 100
+            # @fuel -= 100
 
             track_fuel(@fuelcells)
             # @fuelcells -= 1
@@ -118,11 +120,12 @@ class GameWindow < Gosu::Window
             if button_down?(Gosu::KbDown) and @player.vely == 0 and @player.velx ==0 and process_boundaries(@player)
                   @player.target_location[1] = (@player.location[1]+1)
                   @player.vely = 10
+                  swap_tile(target_cell(@player.x, @player.y))
             end
 
-		@clouds.each do |cloud|
-			update_object(cloud, cloud.velx, cloud.vely)
-		end
+		# @clouds.each do |cloud|
+		# 	update_object(cloud, cloud.velx, cloud.vely)
+		# end
 
 
 
@@ -138,9 +141,9 @@ class GameWindow < Gosu::Window
                   Gosu.translate(0, @tracking) do
                         draw_blocks(@columns)
                         draw_obj(@player, :right)
+                        if @temp then draw_obj(@temp, :right) end
                         @fuel > 15000 ? frame = 0 : frame = 1
-                        p frame
-                        if @fuelcells then @fuelcells.each { |fuel| draw_obj_frame(fuel, :right, frame) } end
+                        # if @fuelcells then @fuelcells.each { |fuel| draw_obj_frame(fuel, :right, frame) } end
                   end
             end
       end
