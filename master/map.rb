@@ -67,40 +67,27 @@ end
 
 
 def generate_row()
-
+	# create a cell for each position in the row
 	@cell_y_count.times do
+		# get coords for the start of the last row
 		x = @columns[-16].block.y+50
 		y = @columns[-16].block.x
-		# puts "spawn cell x#{x} y#{y}"
-		# p index
+		# draw the cell in
 		block = spawn_obj(y, x, "./media/dirt.png", 50, 50, 0, 4, 1, 0, false)
 		@columns << Node.new(block.x, block.y, block, false)
 	end
 
 end
 
+# removes the oldest 16 cells (16 cells = 1 row)
 def delete_row()
 	16.times do @columns.delete_at(0) end
-      # puts "current rows: #{@columns.length/@cell_x_count}"
-      # puts @columns.size
-      # @cell_x_count.times do |y|
-      #       if (@columns.size/@cell_x_count > 50)
-      #             @columns.delete_at(0)
-      #       end
-      # end
 end
 
 
 def draw_blocks(columns)
-      columns.length.times do |i|
-            draw_obj_frame(@columns[i].block, :right, 0)
-            # p @columns[block].block.keyframes
-            # if @columns[block].visited
-            #
-            # else
-            #       draw_obj_frame(@columns[block].block, :right, 1)
-            # end
-
+	columns.length.times do |i|
+		draw_obj_frame(@columns[i].block, :right, 0)
 	end
 end
 

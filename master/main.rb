@@ -19,7 +19,7 @@ class GameWindow < Gosu::Window
             super WIDTH, HEIGHT
             self.caption = "Game"
             @cell_y_count = WIDTH/CELL_DIM
-            @cell_x_count = (HEIGHT/CELL_DIM)-8
+            @cell_x_count = (HEIGHT/CELL_DIM)+1
             puts "map width (y) = #{@cell_y_count}"
             puts "map height (x) = #{@cell_x_count}"
 
@@ -89,10 +89,17 @@ class GameWindow < Gosu::Window
 
 		# puts "#{@player.y} > #{@columns[0].block.y}"
 		# puts "x#{@columns[-1].block.x},y#{@columns[-1].block.y}"
-		if @player.y > @columns[-1].block.y-HEIGHT/2
+		# p "#{@columns[0].block.y*-1} < #{@tracking+HEIGHT}"
+		# p @columns.size
+		# if @player.y > @columns[-1].block.y-HEIGHT/2
+		# 	generate_row()
+		# end
+		# p "#{@columns[17].block.y*-1} > #{@tracking}"
+		
+		# if the first block on the 2nd row is outside of the camera
+		# generate a new row and delete the oldest row
+		if @columns[17].block.y*-1 > @tracking
 			generate_row()
-		end
-		if @columns.size > HEIGHT/2
 			delete_row()
 		end
 		# puts "#{@columns[-1].block.x},#{@columns[-1].block.y}"
