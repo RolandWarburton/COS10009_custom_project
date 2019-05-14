@@ -18,10 +18,10 @@ class GameWindow < Gosu::Window
       def initialize
             super WIDTH, HEIGHT
             self.caption = "Game"
-            @cell_x_count = WIDTH/CELL_DIM
-            @cell_y_count = (HEIGHT/CELL_DIM)+1
-            puts "map width (x) = #{@cell_y_count}"
-            puts "map height (y) = #{@cell_x_count}"
+            @cell_y_count = WIDTH/CELL_DIM
+            @cell_x_count = (HEIGHT/CELL_DIM)-8
+            puts "map width (y) = #{@cell_y_count}"
+            puts "map height (x) = #{@cell_x_count}"
 
 		@columns = generate_cells()
 		@clouds = Array.new()
@@ -34,7 +34,13 @@ class GameWindow < Gosu::Window
             @fuelcells = generate_fuel()
             @fuel = 20000
 
-            target_cell()
+		# p "#{@columns[-16].block.x}, #{@columns[-16].block.y}"
+		@temp = spawn_obj(@columns[-16].block.x, @columns[-16].block.y, './media/red.png', 50, 50, 0, 0, 1)
+		# generate_row()
+
+
+            # target_cell()
+		# generate_row()
 
 
 
@@ -56,8 +62,8 @@ class GameWindow < Gosu::Window
       # runs before update
       def button_down(id)
             case id
-            when Gosu::MsLeft
-                  print_mouse_coords
+            when Gosu::KbB
+                  generate_row()
             when Gosu::KbLeft
             end
 
@@ -78,13 +84,22 @@ class GameWindow < Gosu::Window
             # @fuel -= 100
 
             track_fuel(@fuelcells)
+
+		# puts "#{@player.y} > #{@columns[-1].block.x-200}"
+		# puts "x#{@columns[-1].block.x},y#{@columns[-1].block.y}"
+		if @player.y > @columns[-1].block.x
+			generate_row()
+		end
+		puts "#{@columns[-1].block.x},#{@columns[-1].block.y}"
+		# teleport_object(@temp, @columns[-1].block.x, @columns[-1].block.y)
             # @fuelcells -= 1
 
 
             # puts "#{pix_round(@player)[1]} > #{@columns[-1].x*CELL_DIM}"
-            if  pix_round(@player)[1]+HEIGHT > @columns[-1].x*CELL_DIM
-                  generate_row()
-            end
+            # if  pix_round(@player)[1] > @columns[-1].x*CELL_DIM
+		# 	puts "good"
+            #       generate_row()
+            # end
 
             # DEBUG STUFF
             # p "#{@player.location} -> #{@player.target_location}"
@@ -108,22 +123,22 @@ class GameWindow < Gosu::Window
             if button_down?(Gosu::KbLeft) and @player.vely == 0 and @player.velx ==0 and process_boundaries(@player)
                   @player.target_location[0] = (@player.location[0]-1)
                   @player.velx = -2
-			visit_tile(target_cell(@player.x, @player.y))
+			# visit_tile(target_cell(@player.x, @player.y))
             end
             if button_down?(Gosu::KbRight) and @player.vely == 0 and @player.velx ==0 and process_boundaries(@player)
                   @player.target_location[0] = (@player.location[0]+1)
                   @player.velx = 2
-			visit_tile(target_cell(@player.x, @player.y))
+			# visit_tile(target_cell(@player.x, @player.y))
             end
             if button_down?(Gosu::KbUp) and @player.vely == 0 and @player.velx ==0 and process_boundaries(@player)
                   @player.target_location[1] = (@player.location[1]-1)
                   @player.vely = -2
-			visit_tile(target_cell(@player.x, @player.y))
+			# visit_tile(target_cell(@player.x, @player.y))
             end
             if button_down?(Gosu::KbDown) and @player.vely == 0 and @player.velx ==0 and process_boundaries(@player)
                   @player.target_location[1] = (@player.location[1]+1)
                   @player.vely = 10
-                  visit_tile(target_cell(@player.x, @player.y))
+                  # visit_tile(target_cell(@player.x, @player.y))
             end
 
 		# @clouds.each do |cloud|
@@ -141,9 +156,9 @@ class GameWindow < Gosu::Window
             # draw clouds
             # if @clouds then @clouds.each { |cloud| draw_obj(cloud, :right) } end
 
-                  Gosu.translate(0, @tracking) do
-                        draw_blocks(@columns)
-                        draw_obj(@player, :right)
+		Gosu.translate(0, @tracking) do
+			draw_blocks(@columns)
+				draw_obj(@player, :right)
                         if @temp then draw_obj(@temp, :right) end
                         @fuel > 15000 ? frame = 0 : frame = 1
                         # if @fuelcells then @fuelcells.each { |fuel| draw_obj_frame(fuel, :right, frame) } end

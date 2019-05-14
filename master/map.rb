@@ -1,5 +1,5 @@
 class Node
-      attr_accessor :x, :y, :block, :visited
+      attr_accessor :block, :visited
       def initialize(x, y, block, visited)
 		@x = x
 		@y = y
@@ -10,9 +10,18 @@ class Node
 end
 
 def get_cell_type(row_index)
+	if row_index < 4 then return "./media/air.png" end
       # which sprite should i use for this tile?
-      if row_index > 4 then media = "./media/dirt.png" end
-      if row_index < 4 then media = media = "./media/air.png" end
+	case rand(10)
+	when 1
+		media = "./media/greenore.png"
+	when 2
+		media = "./media/redore.png"
+	else
+		media = "./media/dirt.png"
+	end
+
+      if row_index < 4 then return media end
 
       # return a default sprite if no sprite is specified
       if media then return media else return "./media/dirt.png" end
@@ -23,8 +32,8 @@ def generate_cells()
       rows = @cell_y_count
       table = Array.new()
 
-	@cell_y_count.times do |x|
-            @cell_x_count.times do |y|
+	@cell_x_count.times do |x|
+            @cell_y_count.times do |y|
                   media = get_cell_type(x).to_s
                   block = spawn_obj(0, 0, media, 50, 50, 0, 0, 1, 0, false)
                   block.x = y*CELL_DIM
@@ -50,7 +59,7 @@ def target_cell(x=50, y=100 )
 end
 
 def visit_tile(object)
-	p object
+	# p object
 	# p "#{object.x} #{object.y}"
       # object.visited = true
 end
@@ -59,25 +68,28 @@ end
 
 def generate_row()
       # puts "generating row #{@cell_y_count+1}"
-      x = @columns[@columns.size-1].block.y
-	p @columns[@columns.size-1].block.y
+      # x = @columns[@columns.size-1].block.y
+	# p @columns[@columns.size-1].block.y
 
-            @cell_x_count.times do |y|
-                  media = get_cell_type(x).to_s
-                  block = spawn_obj(0, 0, "./media/red.png", 50, 50, 0, 0, 1, 0, false)
-                  block.x = y*CELL_DIM
-                  block.y = x*CELL_DIM
-                  @columns << Node.new(x, y, block, false)
-            end
+            # @cell_y_count.times do |y|
+                  # media = get_cell_type(x).to_s
+			x = @columns[-1].block.x+50
+			y = @columns[-1].block.y
+			puts "spawn cell x#{x} y#{y}"
+			# p index
+                  block = spawn_obj(x, y, "./media/red.png", 50, 50, 0, 4, 1, 0, false)
+                  @columns << Node.new(block.x, block.y, block, false)
 
-      # increment the row count
-      @cell_y_count+=1
-      # delete the oldest row
-      delete_row()
+            # end
+	#
+      # # increment the row count
+      # @cell_y_count+=1
+      # # delete the oldest row
+      # delete_row()
 end
 
 def delete_row()
-	16.times do |i| @columns.delete_at(0) end
+	16.times do @columns.delete_at(0) end
       # puts "current rows: #{@columns.length/@cell_x_count}"
       # puts @columns.size
       # @cell_x_count.times do |y|
@@ -88,9 +100,9 @@ def delete_row()
 end
 
 
-def draw_blocks(blocks)
-      blocks.length.times do |block|
-            draw_obj_frame(@columns[block].block, :right, 0)
+def draw_blocks(columns)
+      columns.length.times do |i|
+            draw_obj_frame(@columns[i].block, :right, 0)
             # p @columns[block].block.keyframes
             # if @columns[block].visited
             #

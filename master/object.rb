@@ -106,5 +106,9 @@ def draw_obj(object, direction=:right)
 end
 
 def draw_obj_frame(object, direction=:right, frame)
+	# print "[#{object.y},#{object.x}]"
+	# if object.x == 950
+	# 	print "\n"
+	# end
 	if object then object.keyframes[direction].show_frame(frame).draw(object.x, object.y, object.zaxis, object.scale , object.scale) end
 end
