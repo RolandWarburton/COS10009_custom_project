@@ -108,19 +108,22 @@ class GameWindow < Gosu::Window
             if button_down?(Gosu::KbLeft) and @player.vely == 0 and @player.velx ==0 and process_boundaries(@player)
                   @player.target_location[0] = (@player.location[0]-1)
                   @player.velx = -2
+			visit_tile(target_cell(@player.x, @player.y))
             end
             if button_down?(Gosu::KbRight) and @player.vely == 0 and @player.velx ==0 and process_boundaries(@player)
                   @player.target_location[0] = (@player.location[0]+1)
                   @player.velx = 2
+			visit_tile(target_cell(@player.x, @player.y))
             end
             if button_down?(Gosu::KbUp) and @player.vely == 0 and @player.velx ==0 and process_boundaries(@player)
                   @player.target_location[1] = (@player.location[1]-1)
                   @player.vely = -2
+			visit_tile(target_cell(@player.x, @player.y))
             end
             if button_down?(Gosu::KbDown) and @player.vely == 0 and @player.velx ==0 and process_boundaries(@player)
                   @player.target_location[1] = (@player.location[1]+1)
                   @player.vely = 10
-                  swap_tile(target_cell(@player.x, @player.y))
+                  visit_tile(target_cell(@player.x, @player.y))
             end
 
 		# @clouds.each do |cloud|

@@ -9,13 +9,6 @@ class Node
 
 end
 
-class Fixnum
-  def roundup
-    return self if self % 50 == 0   # already a factor of 10
-    return self + 50 - (self % 50)  # go to nearest factor 10
-  end
-end
-
 def get_cell_type(row_index)
       # which sprite should i use for this tile?
       if row_index > 4 then media = "./media/dirt.png" end
@@ -56,25 +49,27 @@ def target_cell(x=50, y=100 )
       # puts "#{x}, #{y}"
 end
 
-def swap_tile(object)
-      object.visited = true
+def visit_tile(object)
+	p object
+	# p "#{object.x} #{object.y}"
+      # object.visited = true
 end
 
 
 
 def generate_row()
       # puts "generating row #{@cell_y_count+1}"
+      x = @columns[@columns.size-1].block.y
+	p @columns[@columns.size-1].block.y
 
-      x = @cell_y_count
-      1.times do
             @cell_x_count.times do |y|
                   media = get_cell_type(x).to_s
-                  block = spawn_obj(0, 0, media, 50, 50, 0, 0, 1, 0, false)
+                  block = spawn_obj(0, 0, "./media/red.png", 50, 50, 0, 0, 1, 0, false)
                   block.x = y*CELL_DIM
                   block.y = x*CELL_DIM
                   @columns << Node.new(x, y, block, false)
             end
-      end
+
       # increment the row count
       @cell_y_count+=1
       # delete the oldest row
@@ -82,13 +77,14 @@ def generate_row()
 end
 
 def delete_row()
+	16.times do |i| @columns.delete_at(0) end
       # puts "current rows: #{@columns.length/@cell_x_count}"
       # puts @columns.size
-      @cell_x_count.times do |y|
-            if (@columns.size/@cell_x_count > 50)
-                  @columns.delete_at(0)
-            end
-      end
+      # @cell_x_count.times do |y|
+      #       if (@columns.size/@cell_x_count > 50)
+      #             @columns.delete_at(0)
+      #       end
+      # end
 end
 
 
