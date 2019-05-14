@@ -67,25 +67,16 @@ end
 
 
 def generate_row()
-      # puts "generating row #{@cell_y_count+1}"
-      # x = @columns[@columns.size-1].block.y
-	# p @columns[@columns.size-1].block.y
 
-            # @cell_y_count.times do |y|
-                  # media = get_cell_type(x).to_s
-			x = @columns[-1].block.x+50
-			y = @columns[-1].block.y
-			puts "spawn cell x#{x} y#{y}"
-			# p index
-                  block = spawn_obj(x, y, "./media/red.png", 50, 50, 0, 4, 1, 0, false)
-                  @columns << Node.new(block.x, block.y, block, false)
+	@cell_y_count.times do
+		x = @columns[-16].block.y+50
+		y = @columns[-16].block.x
+		# puts "spawn cell x#{x} y#{y}"
+		# p index
+		block = spawn_obj(y, x, "./media/dirt.png", 50, 50, 0, 4, 1, 0, false)
+		@columns << Node.new(block.x, block.y, block, false)
+	end
 
-            # end
-	#
-      # # increment the row count
-      # @cell_y_count+=1
-      # # delete the oldest row
-      # delete_row()
 end
 
 def delete_row()

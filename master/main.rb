@@ -26,7 +26,7 @@ class GameWindow < Gosu::Window
 		@columns = generate_cells()
 		@clouds = Array.new()
 		@blocks = Array.new()
-            @player = spawn_player(0,150,'./media/player.png',50,50,0,0,1,1,true)
+            @player = spawn_player(0,0,'./media/player.png',50,50,0,0,1,1,true)
             @player.location = get_grid_loc(@player)
             @player.target_location = @player.location
 
@@ -35,7 +35,7 @@ class GameWindow < Gosu::Window
             @fuel = 20000
 
 		# p "#{@columns[-16].block.x}, #{@columns[-16].block.y}"
-		@temp = spawn_obj(@columns[-16].block.x, @columns[-16].block.y, './media/red.png', 50, 50, 0, 0, 1)
+		@temp = spawn_obj(@columns[-1].block.x, @columns[-1].block.y, './media/red.png', 50, 50, 0, 0, 1)
 		# generate_row()
 
 
@@ -62,6 +62,8 @@ class GameWindow < Gosu::Window
       # runs before update
       def button_down(id)
             case id
+		when Gosu::MsLeft
+			print_mouse_coords()
             when Gosu::KbB
                   generate_row()
             when Gosu::KbLeft
@@ -85,12 +87,15 @@ class GameWindow < Gosu::Window
 
             track_fuel(@fuelcells)
 
-		# puts "#{@player.y} > #{@columns[-1].block.x-200}"
+		# puts "#{@player.y} > #{@columns[0].block.y}"
 		# puts "x#{@columns[-1].block.x},y#{@columns[-1].block.y}"
-		if @player.y > @columns[-1].block.x
+		if @player.y > @columns[-1].block.y-HEIGHT/2
 			generate_row()
 		end
-		puts "#{@columns[-1].block.x},#{@columns[-1].block.y}"
+		if @columns.size > HEIGHT/2
+			delete_row()
+		end
+		# puts "#{@columns[-1].block.x},#{@columns[-1].block.y}"
 		# teleport_object(@temp, @columns[-1].block.x, @columns[-1].block.y)
             # @fuelcells -= 1
 
