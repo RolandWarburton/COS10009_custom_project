@@ -41,8 +41,11 @@ end
 def get_keyframes(object)
 	# object.tiles.length > 0 ? (last_frame = object.tiles.length) : (last_frame = 1)
 	if object.tiles.length > 0
-		keyframes = { :right => Animation.new(object.tiles[0..object.tiles.length], 0.4) }
+		keyframes = {
+			:right => Animation.new(object.tiles[0..object.tiles.length], 0.4)
+		}
 	end
+
 	return keyframes
 end
 
@@ -52,7 +55,7 @@ def update_object(object, x, y)
 	object.x += x
 	object.y += y
 	# wrap at the end of the screen
-	# process_boundaries(object)
+	process_boundaries(object)
 end
 
 def teleport_object(object, x, y)
@@ -65,9 +68,9 @@ def floor_coord(x,y)
 end
 
 # return an objects location on the grid
-def get_loc(object)
-	x = (object.x)
-	y = (object.y)
+def get_grid_loc(object)
+	x = (object.x.floor_to(50))/CELL_DIM
+	y = (object.y.floor_to(50))/CELL_DIM
 	return [x,y]
 end
 
@@ -92,19 +95,8 @@ def process_boundaries(object)
 		object.target_location = get_grid_loc(@player)
 		return false
 	end
+
 	return true
-end
-
-def get_player_cell_id()
-	cell_id = 0
-	x = @player.x.floor_to(50)
-	y = @player.y.floor_to(50)
-	y.times do cell_id+=16 end
-
-	# p "#{x},#{y}: #{cell_id/CELL_DIM-HEIGHT}"
-	# p "#{@columns[cell_id].block.x},#{@columns[cell_id].block.y}"
-	# p @columns[cell_id].visited
-	return cell_id
 
 end
 
