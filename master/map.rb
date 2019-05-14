@@ -1,8 +1,6 @@
 class Node
       attr_accessor :block, :visited
-      def initialize(x, y, block, visited)
-		@x = x
-		@y = y
+      def initialize(block, visited)
 		@block = block
             @visited = visited
       end
@@ -38,17 +36,15 @@ def generate_cells()
                   block = spawn_obj(0, 0, media, 50, 50, 0, 0, 1, 0, false)
                   block.x = y*CELL_DIM
                   block.y = x*CELL_DIM
-                  table << Node.new(x, y, block, false)
+                  table << Node.new(block, false)
             end
       end
       return table
 end
 
-def target_cell(x=50, y=100 )
+def target_cell(x, y)
       # puts "cell [#{@columns[18].x}, #{@columns[18].y}] is at [#{@columns[18].x*CELL_DIM}, #{@columns[18].y*CELL_DIM}]"
       # @temp = spawn_obj(50, 100, "./media/red.png", 50, 50, 0, 0, 1, 0, false)
-      x = (x.floor_to(50)/CELL_DIM)
-      y = (y.floor_to(50)/CELL_DIM)
       cell_id = 0
       # p "x = #{x} y = #{y}"
       y.times do cell_id+=16 end
@@ -73,8 +69,8 @@ def generate_row()
 		x = @columns[-16].block.y+50
 		y = @columns[-16].block.x
 		# draw the cell in
-		block = spawn_obj(y, x, "./media/dirt.png", 50, 50, 0, 4, 1, 0, false)
-		@columns << Node.new(block.x, block.y, block, false)
+		block = spawn_obj(y, x, "./media/red.png", 50, 50, 0, 0, 1, 0, false)
+		@columns << Node.new(block, false)
 	end
 
 end
@@ -87,7 +83,8 @@ end
 
 def draw_blocks(columns)
 	columns.length.times do |i|
-		draw_obj_frame(@columns[i].block, :right, 0)
+            # p @columns[i].visited
+            @columns[i].visited ? draw_obj_frame(@columns[i].block, :right, -1) : draw_obj_frame(@columns[i].block, :right, 0)
 	end
 end
 
