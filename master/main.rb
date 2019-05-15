@@ -188,10 +188,10 @@ class GameWindow < Gosu::Window
 
 		Gosu.translate(0, @tracking) do
 			draw_blocks(@columns)
-			draw_obj(@player, :right)
+			draw_obj(@player, :first)
                   # if @temp then draw_obj(@temp, :right) end
-                  @fuel > 15000 ? frame = 0 : frame = 1
-                  if @fuelcells then @fuelcells.each { |fuel| draw_obj_frame(fuel, :right, frame) } end
+                  @fuel > 15000 ? frame = :first : frame = :last
+                  if @fuelcells then @fuelcells.each { |fuel| draw_obj(fuel, frame) } end
                   end
             end
       end

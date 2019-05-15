@@ -18,6 +18,7 @@ class Obj
 	end
 end
 
+# TODO: add cell/tile type to object class to identify it for animation in draw_blocks()
 def spawn_obj(x=0, y=0, spritesheet='./media/dirt.png', w=100, h=100, velx=0, vely=0, scale=1, zaxis=1, wrapping=false)
 	# puts "spawning object #{spritesheet}"
 	tiles = Gosu::Image.load_tiles(spritesheet, w, h)
@@ -42,7 +43,9 @@ def get_keyframes(object)
 	# object.tiles.length > 0 ? (last_frame = object.tiles.length) : (last_frame = 1)
 	if object.tiles.length > 0
 		keyframes = {
-			:right => Animation.new(object.tiles[0..object.tiles.length], 0.4)
+			:first => Animation.new(object.tiles[0..0], 0.4),
+			:last => Animation.new(object.tiles[object.tiles.length-1..object.tiles.length], 0.4),
+			:anim => Animation.new(object.tiles[0..object.tiles.length-1], 0.4)
 		}
 	end
 
@@ -103,12 +106,4 @@ end
 # how can i do this as a ruby optional argument?
 def draw_obj(object, direction=:right)
 	if object then object.keyframes[direction].start().draw(object.x, object.y, object.zaxis, object.scale , object.scale) end
-end
-
-def draw_obj_frame(object, direction=:right, frame)
-	# print "[#{object.y},#{object.x}]"
-	# if object.x == 950
-	# 	print "\n"
-	# end
-	if object then object.keyframes[direction].show_frame(frame).draw(object.x, object.y, object.zaxis, object.scale , object.scale) end
 end

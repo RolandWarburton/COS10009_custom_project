@@ -101,8 +101,7 @@ end
 
 def draw_blocks(columns)
 	columns.length.times do |i|
-		@columns[i].visited ? draw_obj_frame(@columns[i].block, :right, -1) : draw_obj_frame(@columns[i].block, :right, 0)
-		# draw_obj_frame(@columns[i].block, :right, 0)
+		@columns[i].visited ? draw_obj(@columns[i].block, :last) : draw_obj(@columns[i].block, :first)
 	end
 end
 
