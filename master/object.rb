@@ -76,8 +76,8 @@ end
 
 # translates a pixel location to a grid location
 def pix_round(object)
-	x = object.x.floor_to(50)
-	y = object.y.floor_to(50)
+	x = object.x(50)
+	y = object.y(50)
 	return [x, y]
 
 end

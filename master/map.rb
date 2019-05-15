@@ -47,13 +47,28 @@ end
 def target_cell(x=50, y=100 )
       # puts "cell [#{@columns[18].x}, #{@columns[18].y}] is at [#{@columns[18].x*CELL_DIM}, #{@columns[18].y*CELL_DIM}]"
       # @temp = spawn_obj(50, 100, "./media/red.png", 50, 50, 0, 0, 1, 0, false)
-      x = (x.floor_to(50)/CELL_DIM)
-      y = (y.floor_to(50)/CELL_DIM)
+	tracking_offset = 0;
+	if (@tracking < 0)
+		tracking_offset = 50
+	end
+
+	# if @tracking % 50 == 0
+	# 	tracking_offset = -100
+	# end
+      x = (x/CELL_DIM)
+      y = ((y+@tracking.floor_to(50) + tracking_offset)/CELL_DIM)
+
       cell_id = 0
       # p "x = #{x} y = #{y}"
       y.times do cell_id+=16 end
       x.times do cell_id+=1 end
-      # p "cell id: #{cell_id}"
+      p "cell id: #{cell_id}"
+
+	if @columns[cell_id].block.y < @player.y
+		cell_id+=16
+		@columns[cell_id].visited = true
+	end
+
       return @columns[cell_id]
       # puts "#{x}, #{y}"
 end

@@ -86,6 +86,11 @@ class GameWindow < Gosu::Window
             # @fuel -= 100
 
             track_fuel(@fuelcells)
+		# p @tracking
+
+		p = target_cell(@player.x, @player.y)
+		# p @player.y
+		teleport_object(@temp, p.block.x, p.block.y)
 
 		# puts "#{@player.y} > #{@columns[0].block.y}"
 		# puts "x#{@columns[-1].block.x},y#{@columns[-1].block.y}"
@@ -95,7 +100,7 @@ class GameWindow < Gosu::Window
 		# 	generate_row()
 		# end
 		# p "#{@columns[17].block.y*-1} > #{@tracking}"
-		
+
 		# if the first block on the 2nd row is outside of the camera
 		# generate a new row and delete the oldest row
 		if @columns[17].block.y*-1 > @tracking
@@ -170,10 +175,10 @@ class GameWindow < Gosu::Window
 
 		Gosu.translate(0, @tracking) do
 			draw_blocks(@columns)
-				draw_obj(@player, :right)
-                        if @temp then draw_obj(@temp, :right) end
-                        @fuel > 15000 ? frame = 0 : frame = 1
-                        # if @fuelcells then @fuelcells.each { |fuel| draw_obj_frame(fuel, :right, frame) } end
+			# draw_obj(@player, :right)
+                  if @temp then draw_obj(@temp, :right) end
+                  @fuel > 15000 ? frame = 0 : frame = 1
+                  # if @fuelcells then @fuelcells.each { |fuel| draw_obj_frame(fuel, :right, frame) } end
                   end
             end
       end
