@@ -83,14 +83,22 @@ class GameWindow < Gosu::Window
                   update_object(f, f.velx, f.vely)
             end
             if @fuel % 500 == 0 then @fuelcells.pop end
-            # @fuel -= 100
+            @fuel -= 10
 
-            track_fuel(@fuelcells)
+		track_fuel(@fuelcells)
 		# p @tracking
 
-		p = target_cell(@player.x, @player.y)
-		# p @player.y
-		teleport_object(@temp, p.block.x, p.block.y)
+		if @player.y % 50 == 0
+			cell_id = target_cell(@player.x, @player.y)
+			@columns[cell_id].visited = true
+			teleport_object(@temp, @columns[cell_id].block.x, @columns[cell_id].block.y)
+		end
+
+		# if @player.y % 50 == 0
+		# 	p = target_cell(@player.x, @player.y)
+		# 	# p @player.y
+		# 	teleport_object(@temp, p.block.x, p.block.y)
+		# end
 
 		# puts "#{@player.y} > #{@columns[0].block.y}"
 		# puts "x#{@columns[-1].block.x},y#{@columns[-1].block.y}"
@@ -127,9 +135,14 @@ class GameWindow < Gosu::Window
 
             # if the player is on the target cell. checking x and y.
             #  checking the pixels cos otherwise the player does fuycky things
-            if @player.y == @player.target_location[1]*CELL_DIM and @player.x == @player.target_location[0]*CELL_DIM
+		# and @player.x == @player.target_location[0]*CELL_DIM
+            if (@player.y >= (@player.target_location[1]*CELL_DIM)) and
+			(@player.y <=(@player.target_location[1]*CELL_DIM)) and
+			(@player.x >= (@player.target_location[0]*CELL_DIM)) and
+			(@player.x <= (@player.target_location[0]*CELL_DIM))
                   @player.velx = 0
                   @player.vely = 0
+			process_boundaries(@player)
             else
                   # else the player needs to move
                   update_object(@player, @player.velx, @player.vely)
@@ -139,17 +152,17 @@ class GameWindow < Gosu::Window
 
             if button_down?(Gosu::KbLeft) and @player.vely == 0 and @player.velx ==0 and process_boundaries(@player)
                   @player.target_location[0] = (@player.location[0]-1)
-                  @player.velx = -2
+                  @player.velx = -10
 			# visit_tile(target_cell(@player.x, @player.y))
             end
             if button_down?(Gosu::KbRight) and @player.vely == 0 and @player.velx ==0 and process_boundaries(@player)
                   @player.target_location[0] = (@player.location[0]+1)
-                  @player.velx = 2
+                  @player.velx = 10
 			# visit_tile(target_cell(@player.x, @player.y))
             end
             if button_down?(Gosu::KbUp) and @player.vely == 0 and @player.velx ==0 and process_boundaries(@player)
                   @player.target_location[1] = (@player.location[1]-1)
-                  @player.vely = -2
+                  @player.vely = -10
 			# visit_tile(target_cell(@player.x, @player.y))
             end
             if button_down?(Gosu::KbDown) and @player.vely == 0 and @player.velx ==0 and process_boundaries(@player)
@@ -175,10 +188,10 @@ class GameWindow < Gosu::Window
 
 		Gosu.translate(0, @tracking) do
 			draw_blocks(@columns)
-			# draw_obj(@player, :right)
-                  if @temp then draw_obj(@temp, :right) end
+			draw_obj(@player, :right)
+                  # if @temp then draw_obj(@temp, :right) end
                   @fuel > 15000 ? frame = 0 : frame = 1
-                  # if @fuelcells then @fuelcells.each { |fuel| draw_obj_frame(fuel, :right, frame) } end
+                  if @fuelcells then @fuelcells.each { |fuel| draw_obj_frame(fuel, :right, frame) } end
                   end
             end
       end

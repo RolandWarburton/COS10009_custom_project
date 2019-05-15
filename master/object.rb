@@ -84,10 +84,11 @@ end
 
 # determines if an object needs to wrap the screen
 def process_boundaries(object)
-	coords = get_grid_loc(object)
+	# coords = get_grid_loc(object)
 	# if its outside of the map area. measured in pixels
-	if object.x > (@cell_x_count*CELL_DIM)-CELL_DIM
-		teleport_object(@player, (@cell_x_count*CELL_DIM)-CELL_DIM, @player.y)
+	# puts "#{@cell_x_count*CELL_DIM}"
+	if object.x > (@cell_y_count*CELL_DIM)-CELL_DIM
+		teleport_object(@player, (@cell_y_count*CELL_DIM)-CELL_DIM, @player.y)
 		object.target_location = get_grid_loc(@player)
 		return false
 	elsif object.x < 0
@@ -95,7 +96,6 @@ def process_boundaries(object)
 		object.target_location = get_grid_loc(@player)
 		return false
 	end
-
 	return true
 
 end

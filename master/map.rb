@@ -17,8 +17,11 @@ def get_cell_type(row_index)
 		media = "./media/greenore.png"
 	when 2
 		media = "./media/redore.png"
+	when 3
+		media = "./media/fuelore.png"
 	else
 		media = "./media/dirt.png"
+
 	end
 
       if row_index < 4 then return media end
@@ -45,6 +48,7 @@ def generate_cells()
 end
 
 def target_cell(x=50, y=100 )
+
       # puts "cell [#{@columns[18].x}, #{@columns[18].y}] is at [#{@columns[18].x*CELL_DIM}, #{@columns[18].y*CELL_DIM}]"
       # @temp = spawn_obj(50, 100, "./media/red.png", 50, 50, 0, 0, 1, 0, false)
 	tracking_offset = 0;
@@ -62,22 +66,17 @@ def target_cell(x=50, y=100 )
       # p "x = #{x} y = #{y}"
       y.times do cell_id+=16 end
       x.times do cell_id+=1 end
-      p "cell id: #{cell_id}"
+      # p "cell id: #{cell_id}"
 
 	if @columns[cell_id].block.y < @player.y
 		cell_id+=16
 		@columns[cell_id].visited = true
 	end
 
-      return @columns[cell_id]
+      return cell_id
       # puts "#{x}, #{y}"
 end
 
-def visit_tile(object)
-	# p object
-	# p "#{object.x} #{object.y}"
-      # object.visited = true
-end
 
 
 
@@ -102,7 +101,8 @@ end
 
 def draw_blocks(columns)
 	columns.length.times do |i|
-		draw_obj_frame(@columns[i].block, :right, 0)
+		@columns[i].visited ? draw_obj_frame(@columns[i].block, :right, -1) : draw_obj_frame(@columns[i].block, :right, 0)
+		# draw_obj_frame(@columns[i].block, :right, 0)
 	end
 end
 
