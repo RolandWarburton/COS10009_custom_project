@@ -2,18 +2,17 @@ require 'gosu'
 require './animation'
 
 class Obj
-	attr_accessor :x, :y, :w, :h, :tiles, :keyframes, :scale, :zaxis, :wrapping, :velx, :vely
+	attr_accessor :x, :y, :w, :h, :tiles, :keyframes, :scale, :zaxis, :wrapping, :velx, :vely, :spritesheet
 	def initialize(x, y, spritesheet, w, h, velx, vely, scale, zaxis, wrapping)
 		@x, @y = x, y
-		@spritesheet = tiles
+		@h, @w = h, w
+		@spritesheet = spritesheet
+		# p spritesheet
 		@velx = velx
 		@vely = vely
 		@scale = scale
 		@zaxis = zaxis
 		@wrapping = wrapping
-		@h = h
-		@w = w
-		# p tiles
 		@tiles = Gosu::Image.load_tiles(spritesheet, w, h)
 		# instance a new animation
 		@keyframes = get_keyframes(self)
@@ -21,23 +20,10 @@ class Obj
 end
 
 # TODO: add cell/tile type to object class to identify it for animation in draw_blocks()
-def spawn_obj(x=0, y=0, spritesheet, w, h, velx, vely, scale, zaxis, wrapping)
+def spawn_obj(x, y, spritesheet, w, h, velx, vely, scale, zaxis, wrapping)
 	# puts "spawning object #{spritesheet}"
 	Obj.new(x, y, spritesheet, w, h, velx, vely, scale, zaxis, wrapping)
 end
-
-def get_random_spawn_location(type)
-	if @list_of_objs[type].last
-		object = @list_of_objs[type].last
-		loop do
-			seed = rand(HEIGHT)
-			return seed if seed < object.y-100 or seed > object.h*object.scale+100 and seed < HEIGHT-100 and seed > 100
-		end
-	else
-		return 100
-	end
-end
-
 
 # reads all of the keyframes for all sprites of a particular object
 def get_keyframes(object)
@@ -83,14 +69,10 @@ def pix_round(object)
 	x = object.x(50)
 	y = object.y(50)
 	return [x, y]
-
 end
 
 # determines if an object needs to wrap the screen
 def process_boundaries(object)
-	# coords = get_grid_loc(object)
-	# if its outside of the map area. measured in pixels
-	# puts "#{@cell_x_count*CELL_DIM}"
 	if object.x > (@cell_y_count*CELL_DIM)-CELL_DIM
 		teleport_object(@player, (@cell_y_count*CELL_DIM)-CELL_DIM, @player.y)
 		object.target_location = get_grid_loc(@player)

@@ -38,7 +38,7 @@ def generate_cells()
 	@cell_x_count.times do |x|
             @cell_y_count.times do |y|
                   media = get_cell_type(x).to_s
-                  block = spawn_obj(0, 0, media, 50, 50, 0, 0, 1, 0, false)
+                  block = spawn_obj(nil, nil, media, 50, 50, 0, 0, 1, 0, false)
                   block.x = y*CELL_DIM
                   block.y = x*CELL_DIM
                   table << Node.new(x, y, block, false)
@@ -87,7 +87,7 @@ def generate_row()
 		x = @columns[-16].block.y+50
 		y = @columns[-16].block.x
 		# draw the cell in
-		block = spawn_obj(y, x, "./media/dirt.png", 50, 50, 0, 4, 1, 0, false)
+		block = spawn_obj(y, x, "./media/dirt.png", 50, 50, 0, 0, 1, 0, false)
 		@columns << Node.new(block.x, block.y, block, false)
 	end
 
