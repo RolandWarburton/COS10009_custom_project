@@ -3,8 +3,9 @@ require './animation'
 
 class Obj
 	attr_accessor :x, :y, :w, :h, :tiles, :keyframes, :scale, :zaxis, :wrapping, :velx, :vely
-	def initialize(x, y, tiles, w, h, velx, vely, scale, zaxis, wrapping)
+	def initialize(x, y, spritesheet, w, h, velx, vely, scale, zaxis, wrapping)
 		@x, @y = x, y
+		@spritesheet = tiles
 		@velx = velx
 		@vely = vely
 		@scale = scale
@@ -12,17 +13,17 @@ class Obj
 		@wrapping = wrapping
 		@h = h
 		@w = w
-		@tiles = tiles
+		# p tiles
+		@tiles = Gosu::Image.load_tiles(spritesheet, w, h)
 		# instance a new animation
 		@keyframes = get_keyframes(self)
 	end
 end
 
 # TODO: add cell/tile type to object class to identify it for animation in draw_blocks()
-def spawn_obj(x=0, y=0, spritesheet='./media/dirt.png', w=100, h=100, velx=0, vely=0, scale=1, zaxis=1, wrapping=false)
+def spawn_obj(x=0, y=0, spritesheet, w, h, velx, vely, scale, zaxis, wrapping)
 	# puts "spawning object #{spritesheet}"
-	tiles = Gosu::Image.load_tiles(spritesheet, w, h)
-	Obj.new(x, y, tiles, w, h, velx, vely, scale, zaxis, wrapping)
+	Obj.new(x, y, spritesheet, w, h, velx, vely, scale, zaxis, wrapping)
 end
 
 def get_random_spawn_location(type)

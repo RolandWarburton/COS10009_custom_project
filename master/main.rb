@@ -26,24 +26,22 @@ class GameWindow < Gosu::Window
 		@columns = generate_cells()
 		@clouds = Array.new()
 		@blocks = Array.new()
-            @player = spawn_player(0,0,'./media/player.png',50,50,0,0,1,1,true)
-            @player.location = get_grid_loc(@player)
-            @player.target_location = @player.location
+            # @player = spawn_player(0,0,"./media/player.png",50,50,0,0,1,1,true)
+            # @player.location = get_grid_loc(@player)
+            # @player.target_location = @player.location
 
 
             @fuelcells = generate_fuel()
             @fuel = 20000
 
 		# p "#{@columns[-16].block.x}, #{@columns[-16].block.y}"
-		@temp = spawn_obj(@columns[-1].block.x, @columns[-1].block.y, './media/red.png', 50, 50, 0, 0, 1)
+		# @temp = spawn_obj(@columns[-1].block.x, @columns[-1].block.y, './media/red.png', 50, 50, 0, 0, 1)
 		# generate_row()
 
 
             # target_cell()
 		# generate_row()
-
-
-
+		
 		# @clouds << cloud = spawn_obj(-50, 100, './media/cloud1.png', 846, 540, 4, 0, 0.3, 1, true)
 		# @blocks << block = spawn_obj(0, 0, './media/dirt.png', 50, 50, 0, 0, 1, 1, false)
 
@@ -73,10 +71,10 @@ class GameWindow < Gosu::Window
 
       # update
       def update
-            @player.location = get_grid_loc(@player)
+            # @player.location = get_grid_loc(@player)
 
             # camera controls
-            @player.location[1] > 15 ? @tracking  -=5 : @tracking = 0
+            # @player.location[1] > 15 ? @tracking  -=5 : @tracking = 0
 
 
             for f in @fuelcells
@@ -85,116 +83,66 @@ class GameWindow < Gosu::Window
             if @fuel % 500 == 0 then @fuelcells.pop end
             @fuel -= 10
 
-		track_fuel(@fuelcells)
-		# p @tracking
-
-		if @player.y % 50 == 0
-			cell_id = target_cell(@player.x, @player.y)
-			@columns[cell_id].visited = true
-			teleport_object(@temp, @columns[cell_id].block.x, @columns[cell_id].block.y)
-		end
+		# track_fuel(@fuelcells)
 
 		# if @player.y % 50 == 0
-		# 	p = target_cell(@player.x, @player.y)
-		# 	# p @player.y
-		# 	teleport_object(@temp, p.block.x, p.block.y)
+		# 	cell_id = target_cell(@player.x, @player.y)
+		# 	@columns[cell_id].visited = true
 		# end
 
-		# puts "#{@player.y} > #{@columns[0].block.y}"
-		# puts "x#{@columns[-1].block.x},y#{@columns[-1].block.y}"
-		# p "#{@columns[0].block.y*-1} < #{@tracking+HEIGHT}"
-		# p @columns.size
-		# if @player.y > @columns[-1].block.y-HEIGHT/2
+		# if @columns[17].block.y*-1 > @tracking
 		# 	generate_row()
+		# 	delete_row()
 		# end
-		# p "#{@columns[17].block.y*-1} > #{@tracking}"
-
-		# if the first block on the 2nd row is outside of the camera
-		# generate a new row and delete the oldest row
-		if @columns[17].block.y*-1 > @tracking
-			generate_row()
-			delete_row()
-		end
-		# puts "#{@columns[-1].block.x},#{@columns[-1].block.y}"
-		# teleport_object(@temp, @columns[-1].block.x, @columns[-1].block.y)
-            # @fuelcells -= 1
-
-
-            # puts "#{pix_round(@player)[1]} > #{@columns[-1].x*CELL_DIM}"
-            # if  pix_round(@player)[1] > @columns[-1].x*CELL_DIM
-		# 	puts "good"
-            #       generate_row()
-            # end
-
-            # DEBUG STUFF
-            # p "#{@player.location} -> #{@player.target_location}"
-
-            # spawning in clouds at random
-            # if rand(100) == 1 and @clouds.length <1 then @clouds << cloud = spawn_obj(-50, rand(HEIGHT), './media/cloud1.png', 846, 540, 4, 0, 0.3, 1, false) end
-
 
             # if the player is on the target cell. checking x and y.
             #  checking the pixels cos otherwise the player does fuycky things
 		# and @player.x == @player.target_location[0]*CELL_DIM
-            if (@player.y >= (@player.target_location[1]*CELL_DIM)) and
-			(@player.y <=(@player.target_location[1]*CELL_DIM)) and
-			(@player.x >= (@player.target_location[0]*CELL_DIM)) and
-			(@player.x <= (@player.target_location[0]*CELL_DIM))
-                  @player.velx = 0
-                  @player.vely = 0
-			process_boundaries(@player)
-            else
-                  # else the player needs to move
-                  update_object(@player, @player.velx, @player.vely)
-            end
+            # if (@player.y >= (@player.target_location[1]*CELL_DIM)) and
+		# 	(@player.y <=(@player.target_location[1]*CELL_DIM)) and
+		# 	(@player.x >= (@player.target_location[0]*CELL_DIM)) and
+		# 	(@player.x <= (@player.target_location[0]*CELL_DIM))
+            #       @player.velx = 0
+            #       @player.vely = 0
+		# 	process_boundaries(@player)
+		# else
+            #       # else the player needs to move
+            #       update_object(@player, @player.velx, @player.vely)
+            # end
 
 
-
-            if button_down?(Gosu::KbLeft) and @player.vely == 0 and @player.velx ==0 and process_boundaries(@player)
-                  @player.target_location[0] = (@player.location[0]-1)
-                  @player.velx = -10
-			# visit_tile(target_cell(@player.x, @player.y))
-            end
-            if button_down?(Gosu::KbRight) and @player.vely == 0 and @player.velx ==0 and process_boundaries(@player)
-                  @player.target_location[0] = (@player.location[0]+1)
-                  @player.velx = 10
-			# visit_tile(target_cell(@player.x, @player.y))
-            end
-            if button_down?(Gosu::KbUp) and @player.vely == 0 and @player.velx ==0 and process_boundaries(@player)
-                  @player.target_location[1] = (@player.location[1]-1)
-                  @player.vely = -10
-			# visit_tile(target_cell(@player.x, @player.y))
-            end
-            if button_down?(Gosu::KbDown) and @player.vely == 0 and @player.velx ==0 and process_boundaries(@player)
-                  @player.target_location[1] = (@player.location[1]+1)
-                  @player.vely = 10
-                  # visit_tile(target_cell(@player.x, @player.y))
-            end
-
-		# @clouds.each do |cloud|
-		# 	update_object(cloud, cloud.velx, cloud.vely)
-		# end
-
-
-
-
-
-      end
+            # if button_down?(Gosu::KbLeft) and @player.vely == 0 and @player.velx ==0 and process_boundaries(@player)
+            #       @player.target_location[0] = (@player.location[0]-1)
+            #       @player.velx = -10
+            # end
+            # if button_down?(Gosu::KbRight) and @player.vely == 0 and @player.velx ==0 and process_boundaries(@player)
+            #       @player.target_location[0] = (@player.location[0]+1)
+            #       @player.velx = 10
+            # end
+            # if button_down?(Gosu::KbUp) and @player.vely == 0 and @player.velx ==0 and process_boundaries(@player)
+            #       @player.target_location[1] = (@player.location[1]-1)
+            #       @player.vely = -10
+            # end
+            # if button_down?(Gosu::KbDown) and @player.vely == 0 and @player.velx ==0 and process_boundaries(@player)
+            #       @player.target_location[1] = (@player.location[1]+1)
+            #       @player.vely = 10
+            # end
+	end
 
 	#draw
 	def draw
-            # draw clouds
-            # if @clouds then @clouds.each { |cloud| draw_obj(cloud, :right) } end
+		# draw clouds
+		# if @clouds then @clouds.each { |cloud| draw_obj(cloud, :right) } end
 
-		Gosu.translate(0, @tracking) do
+		# Gosu.translate(0, @tracking) do
 			draw_blocks(@columns)
-			draw_obj(@player, :first)
-                  # if @temp then draw_obj(@temp, :right) end
-                  @fuel > 15000 ? frame = :first : frame = :last
-                  if @fuelcells then @fuelcells.each { |fuel| draw_obj(fuel, frame) } end
-                  end
-            end
-      end
+			# draw_obj(@player, :first)
+			# if @temp then draw_obj(@temp, :right) end
+			@fuel > 15000 ? frame = :first : frame = :last
+			if @fuelcells then @fuelcells.each { |fuel| draw_obj(fuel, frame) } end
+			end
+		# end
+	end
 # thanks for playing :)
 
 GameWindow.new.show
