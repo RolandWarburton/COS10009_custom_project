@@ -16,32 +16,32 @@ CELL_Y_COUNT = (HEIGHT/CELL_DIM)
 
 class GameWindow < Gosu::Window
       def initialize
-            super WIDTH, HEIGHT
-            self.caption = "Game"
-            @cell_y_count = WIDTH/CELL_DIM
-            @cell_x_count = (HEIGHT/CELL_DIM)+1
-            puts "map width (y) = #{@cell_y_count}"
-            puts "map height (x) = #{@cell_x_count}"
+		super WIDTH, HEIGHT
+		self.caption = "Game"
+		@cell_y_count = WIDTH/CELL_DIM
+		@cell_x_count = (HEIGHT/CELL_DIM)+1
+		puts "map width (y) = #{@cell_y_count}"
+		puts "map height (x) = #{@cell_x_count}"
 
 		@columns = generate_cells()
 		@clouds = Array.new()
 		@blocks = Array.new()
+		@player = spawn_player(0,0,"./media/player.png",50,50,0,0,1,1,true)
+		@player.location = get_grid_loc(@player)
+		@player.target_location = @player.location
 
-            @player = spawn_player(50,150,"./media/player.png",50,50,0,0,1,1,true)
-            @player.location = get_grid_loc(@player)
-            @player.target_location = @player.location
 
+		@fuelcells = generate_fuel()
+		@fuel = 10000
 
-            @fuelcells = generate_fuel()
-            @fuel = 10000
-
-		# p "#{@columns[-16].block.x}, #{@columns[-16].block.y}"
 		# @temp = spawn_obj(@columns[-1].block.x, @columns[-1].block.y, './media/red.png', 50, 50, 0, 0, 1)
 
-		# @clouds << cloud = spawn_obj(-50, 100, './media/cloud1.png', 846, 540, 4, 0, 0.3, 1, true)
-		# @blocks << block = spawn_obj(0, 0, './media/dirt.png', 50, 50, 0, 0, 1, 1, false)
-
 		# @background = spawn_obj(0, 0, './media/background.png', WIDTH-1, HEIGHT-1, 0, 0, 1, 0, false)
+
+            @key = {
+                  kb_left: Gosu::KbLeft,
+                  kb_right: Gosu::KbRight,
+            }
 
             def needs_cursor?
                   true
@@ -67,22 +67,20 @@ class GameWindow < Gosu::Window
             # camera controls
             @player.location[1] > 15 ? @tracking  -=5 : @tracking = 0
 
+
             for f in @fuelcells
                   update_object(f, f.velx, f.vely)
             end
             if @fuel % 400 == 0 then @fuelcells.pop end
+			p @fuel
             @fuel -= 10
 
 		track_fuel(@fuelcells)
 
 		if @player.y % 50 == 0
 			cell_id = target_cell(@player.x, @player.y)
-			if @columns[cell_id].visited != true and @columns[cell_id].block.spritesheet == "./media/fuelore.png" and @fuel < 10000
-                        addfuel()
-                        puts "added fuel"
-                        @fuel = 10000
-                  end
-                  @columns[cell_id].visited = true
+			@columns[cell_id].visited = true
+			if @columns[cell_id].block.spritesheet == "./media/fuelore.png" and  @columns[cell_id].visited = true then addfuel(); @fuel = 10000 end
 		end
 
 		if @columns[17].block.y*-1 > @tracking
@@ -91,7 +89,7 @@ class GameWindow < Gosu::Window
 		end
 
             # if the player is on the target cell. checking x and y.
-            #  checking the pixels cos otherwise the player does fuycky things
+             # checking the pixels cos otherwise the player does fuycky things
             if (@player.y >= (@player.target_location[1]*CELL_DIM)) and
 			(@player.y <=(@player.target_location[1]*CELL_DIM)) and
 			(@player.x >= (@player.target_location[0]*CELL_DIM)) and
