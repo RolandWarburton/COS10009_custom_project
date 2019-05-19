@@ -13,7 +13,7 @@ end
 def get_cell_type(row_index)
 	if row_index < 4 then return "./media/air.png" end
 
-	case rand(10)
+	case rand(20)
 	when 1; media = "./media/greenore.png"
 	when 2; media = "./media/redore.png"
 	when 3; media = "./media/fuelore.png"
@@ -65,7 +65,7 @@ def generate_row()
 	@cell_y_count.times do
 		# get coords for the start of the last row
 		x, y = @columns[-16].block.y+50, @columns[-16].block.x
-		@columns << Node.new(x, y, spawn_obj(y, x, "./media/dirt.png", 50, 50, 0, 0, 1, 0, false), false)
+		@columns << Node.new(x, y, spawn_obj(y, x, get_cell_type(10).to_s, 50, 50, 0, 0, 1, 0, false), false)
 	end
 end
 

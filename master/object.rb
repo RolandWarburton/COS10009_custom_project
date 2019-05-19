@@ -82,6 +82,7 @@ def process_boundaries(object)
 		object.target_location = get_grid_loc(@player)
 		return false
 	end
+
 	return true
 
 end
